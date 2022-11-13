@@ -1,6 +1,30 @@
 const router = require("express").Router();
-const sequelize = require("../config/config");
-const { Art, Comment, Eval, User } = require("../models");
+const sequelize = require("../config/connection");
+const { Post, Comment, User } = require('../models');
+
+router.get('/', async (req, res) => {
+  let dbPostData = Post.findAll({
+    attributes: ['id', 'title', 'post_text'],
+    include: [
+      {
+        model: User,
+        attributes: ['id', 'name']
+      },
+      {
+        model: Comment,
+      }
+    ]
+  })
+});
+
+res.render('homepage', {
+  posts: dbPostData,
+  loggedIn: req.session.loggedIn
+});
+.catch (err => {
+  console.log(err);
+  res.status(500).json.(err);
+});
 
 router.get("/art/:id", async (req, res) => {
   try {
