@@ -2,29 +2,31 @@ const router = require("express").Router();
 const sequelize = require("../config/connection");
 const { Post, Comment, User } = require('../models');
 
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   let dbPostData = Post.findAll({
-    attributes: ['id', 'title', 'post_text'],
+    attributes: ["id", "title", "post_text"],
     include: [
       {
         model: User,
-        attributes: ['id', 'name']
+        attributes: ["id", "username"],
       },
       {
         model: Comment,
-      }
-    ]
-  })
+      },
+    ],
+  });
+
+  if (dbPostData.length) {
+    dbPostData = dbPostData.map((post) => post.get({ plain: true }));
+  }
+
+  res.render("homepage", {
+    posts: dbPostData,
+    loggedIn: req.session.loggedIn,
+    currentUserId: req.session.user_id,
+  });
 });
 
-res.render('homepage', {
-  posts: dbPostData,
-  loggedIn: req.session.loggedIn
-});
-.catch (err => {
-  console.log(err);
-  res.status(500).json.(err);
-});
 
 router.get("/art/:id", async (req, res) => {
   try {
