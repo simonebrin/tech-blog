@@ -11,7 +11,7 @@ router.get('/', hasAuth, (req, res) => {
         },
         attributes: [
             'id',
-            title,
+            'title',
         ],
         include: [
             {
@@ -37,5 +37,7 @@ router.get('/', hasAuth, (req, res) => {
             res.status(500).json(err);
         });
 });
+
+// router.get()
 
 module.exports = router;

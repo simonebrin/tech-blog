@@ -2,21 +2,21 @@ const router = require("express").Router();
 const sequelize = require("../config/connection");
 const { Post, Comment, User } = require('../models');
 
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
   // let dbPostData = await Post.findAll({
   Post.findAll({
-    attributes: ["id", "title", "post_text"],
+    attributes: ['id', 'title', 'post_text'],
     include: [
       {
         model: User,
-        attributes: ["id", "username"],
+        attributes: ['username'],
       },
       {
         model: Comment,
-        attributes: ["id", "comment_text", "user_id"],
+        attributes: ['id', 'comment_text', 'user_id'],
         include: {
           model: User,
-          attributes: ["username"],
+          attributes: ['username'],
         },
       },
     ],
@@ -24,7 +24,7 @@ router.get("/", async (req, res) => {
     .then((dbPostData) => {
       const posts = dbPostData.map((post) => post.get({ plain: true }));
 
-      res.render("homepage", {
+      res.render('homepage', {
         posts: dbPostData,
         loggedIn: req.session.loggedIn,
         currentUserId: req.session.user_id,
@@ -36,15 +36,26 @@ router.get("/", async (req, res) => {
     });
 });
 
-  if (dbPostData.length) {
-    dbPostData = dbPostData.map((post) => post.get({ plain: true }));
+router.get('/login', (req, res) => {
+  if (req.session.loggedIn) {
+    res.redirect('/');
+    return;
   }
 
-  res.render("homepage", {
-    posts: dbPostData,
-    loggedIn: req.session.loggedIn,
-    currentUserId: req.session.user_id,
-  });
+  res.render('login');
+});
+
+module.exports = router;
+
+  // if (dbPostData.length) {
+  //   dbPostData = dbPostData.map((post) => post.get({ plain: true }));
+  // }
+
+  // res.render('homepage', {
+  //   posts: dbPostData,
+  //   loggedIn: req.session.loggedIn,
+  //   currentUserId: req.session.user_id,
+  // });
 
 
 
@@ -125,4 +136,4 @@ router.get("/", async (req, res) => {
 //   res.render("login");
 // });
 
-module.exports = router;
+
