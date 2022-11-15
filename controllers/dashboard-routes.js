@@ -12,6 +12,7 @@ router.get('/', hasAuth, (req, res) => {
         attributes: [
             'id',
             'title',
+            'post_url',
         ],
         include: [
             {
